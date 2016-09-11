@@ -18,7 +18,7 @@ output:
 
 
 
-Every book needs a cover, every jar a lid, and every blog an 'hello world' post. This is mine. Hello and welcome to my blog.
+Every book needs a cover, every jar a lid, and every blog a 'hello world' post. This is mine. Hello and welcome to my blog.
 
 What kind of posts can you expect to see here? Well, for one, I'm a big fan of R, or more precisely, the [#tidyverse](http://github.com/hadley/tidyverse). As [Hadley Wickham](https://twitter.com/hadleywickham), the high priest of the tidyverse himself, [said](https://www.reddit.com/r/dataisbeautiful/comments/3mp9r7/im_hadley_wickham_chief_scientist_at_rstudio_and/cvhl63u)
 
