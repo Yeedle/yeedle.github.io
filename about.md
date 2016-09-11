@@ -1,12 +1,7 @@
 ---
 layout: page
-title: About
+title: About Me
 ---
 
-<p class="message">
-  Write in R Markdown, preview with Jekyll, push to GitHub.
-</p>
 
-This is a skeleton/tutorial for a Jekyll-powered blog based on the [Lanyon](http://lanyon.getpoole.com) theme by [@mdo](https://twitter.com/mdo), customized for R-bloggers with the help of Yihui Xie's <a href = "https://github.com/yihui/knitr-jekyll">knitr-jekyll</a>.
-
-The repo for this blog-template is [GitHub](https://github.com/homerhanumat/knitr-lanyon).
+My name is Abe "Yeedle" Neuwirth. You can find me on [Twitter](http://twitter.com/yeedle) and on [GitHub](http://github.com/yeedle). 
