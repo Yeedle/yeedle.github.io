@@ -4,7 +4,7 @@
  <title>Pseudo-Randomness</title>
  <link href="https://yeedle.github.io/atom.xml" rel="self"/>
  <link href="https://yeedle.github.io/"/>
- <updated>2016-09-11T00:37:01-04:00</updated>
+ <updated>2016-09-11T00:55:17-04:00</updated>
  <id>https://yeedle.github.io</id>
  <author>
    <name>Abe Neuwirth</name>
@@ -15,9 +15,9 @@
  <entry>
    <title>Hello World</title>
    <link href="https://yeedle.github.io/2016/09/11/hello-world.html"/>
-   <updated>2016-09-11T00:00:00-04:00</updated>
+   <updated>2016-09-11T00:37:01-04:00</updated>
    <id>https://yeedle.github.io/2016/09/11/hello-world</id>
-   <content type="html">&lt;p&gt;Every book needs a cover, every jar a lid, and every blog an ‘hello world’ post. This is mine. Hello and welcome to my blog.&lt;/p&gt;
+   <content type="html">&lt;p&gt;Every book needs a cover, every jar a lid, and every blog a ‘hello world’ post. This is mine. Hello and welcome to my blog.&lt;/p&gt;
 
 &lt;p&gt;What kind of posts can you expect to see here? Well, for one, I’m a big fan of R, or more precisely, the &lt;a href=&quot;http://github.com/hadley/tidyverse&quot;&gt;#tidyverse&lt;/a&gt;. As &lt;a href=&quot;https://twitter.com/hadleywickham&quot;&gt;Hadley Wickham&lt;/a&gt;, the high priest of the tidyverse himself, &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/3mp9r7/im_hadley_wickham_chief_scientist_at_rstudio_and/cvhl63u&quot;&gt;said&lt;/a&gt;&lt;/p&gt;
 
