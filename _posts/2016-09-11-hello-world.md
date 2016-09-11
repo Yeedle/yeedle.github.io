@@ -10,6 +10,7 @@ output:
   html_document:
     mathjax:  default
     fig_caption:  true
+excerpt: "Pseudo-Randomness, World. World, Pseudo-Randomness."
 ---
 
 
