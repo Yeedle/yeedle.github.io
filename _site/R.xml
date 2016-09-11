@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+ <title>Pseudo-Randomness</title>
+ <link href="https://yeedle.github.io/R.xml" rel="self"/>
+ <link href="https://yeedle.github.io/"/>
+ <updated>2016-09-11T00:18:29-04:00</updated>
+ <id>https://yeedle.github.io</id>
+ <author>
+   <name>Abe Neuwirth</name>
+   <email></email>
+ </author>
+
+ 
+
+</feed>
