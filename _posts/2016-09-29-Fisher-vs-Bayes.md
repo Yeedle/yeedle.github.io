@@ -2,7 +2,7 @@
 layout:  post
 title: "Fisher vs. Bayes"
 comments:  true
-published:  true
+published:  false
 author: "Yeedle"
 date: "2016-09-29 09:50:00 EDT"
 categories: [NYC, taxi, R, ggplot2, ggmap, dplyr]
