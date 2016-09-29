@@ -25,3 +25,4 @@ If that sounds boring, think again. The open[^1] dataset we worked with hold the
 [^1]: Open data is data that is "freely available to everyone to use and republish as they wish, without restrictions from copyright, patents or other mechanisms of control", as per [Wikipedia](https://en.wikipedia.org/wiki/Open_data)
 
 But in this post I want to focus on one particular question we explored. We asked: Is there a way to measure, quantify, and visualize the daily flow of taxis in New York City? It's a simple question
+
