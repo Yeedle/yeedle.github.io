@@ -10,7 +10,7 @@ output:
   html_document:
     mathjax:  default
     fig_caption:  true
-excerpt: "Visualizing the flow of travel in NYC, through the prism of the yellow taxi system."
+excerpt: "Visualizing the flow of taxi travel in NYC, through the prism of the yellow taxi system."
 ---
 
 
