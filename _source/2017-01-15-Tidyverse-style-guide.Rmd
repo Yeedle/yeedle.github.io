@@ -4,7 +4,7 @@ title: "A Tidyverse Style Guide"
 comments:  true
 published:  true
 author: "Yeedle"
-date: "2017-01-15 09:50:00 EDT"
+date: "2017-01-15 09:00:00 EST"
 categories: [R, tidyverse, "style guide"]
 output:
   html_document:
@@ -102,7 +102,7 @@ When breaking up a pipe into multiple intermediate objects, don't use the same n
 
 Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^tenperpipe] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.[^rhsassignment]
 
-[^rhsassignment]: [Rudis, 2015](https://rud.is/b/2015/02/04/a-step-to-the-right-in-r-assignments/)]
+[^rhsassignment]: [Rudis, 2015](https://rud.is/b/2015/02/04/a-step-to-the-right-in-r-assignments/)
 
 <div class = "good">
 GOOD:
