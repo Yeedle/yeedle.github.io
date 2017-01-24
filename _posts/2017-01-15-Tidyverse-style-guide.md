@@ -15,10 +15,8 @@ excerpt: "How to style your code, when you code with the tidyverse"
 ---
 
 <style>
-div.bad pre.r { background-color:rgba(255, 0, 0, 0.2); }
-div.good pre.r { background-color:rgba(0, 255, 0, 0.2); }
-div.good  { background-color:green; }
-div.bad  { background-color:red; }
+div.bad code.language-r { background-color:rgba(255, 0, 0, 0.2); }
+div.good code-language-r { background-color:rgba(0, 255, 0, 0.2); }
 </style>
 
 
