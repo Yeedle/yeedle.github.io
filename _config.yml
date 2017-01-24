@@ -38,3 +38,6 @@ author:
 
 github:           https://github.com/yeedle
 twitter:          https://twitter.com/yeedle
+
+# highlighter
+highlighter: haddock
