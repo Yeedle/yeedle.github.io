@@ -102,8 +102,8 @@ When breaking up a pipe into multiple intermediate objects, don't use the same n
 <script async src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </center>
 
-Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^tenperpipe] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.[^rhsassignment] 
-
+Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^%<>%] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.[^rhsassignment] 
+[^%<>%]: [Wickham, 2017](http://r4ds.had.co.nz/pipes.html#other-tools-from-magrittr)
 [^rhsassignment]: [Rudis, 2015](https://rud.is/b/2015/02/04/a-step-to-the-right-in-r-assignments/)
 
 <div class = "good">
@@ -134,10 +134,11 @@ mtcars %>%
   group_by(gear) %>%
   summarise(avg_disp = mean(disp)) -> mtcars
 {% endhighlight %}
+
 When adding more then one column in a `mutate` pipe, separate them on multiple lines, or just use separate mutate statements for each column.
 
 <div class = "good">
-GOOD:
+Good:
 
 {% highlight r %}
 mtcars %>%
@@ -148,7 +149,7 @@ mtcars %>%
 </div>
 
 <div class = "good">
-GOOD:
+Good:
 
 {% highlight r %}
 mtcars %>%
@@ -158,7 +159,7 @@ mtcars %>%
 {% endhighlight %}
 </div>
 <div class = "bad">
-BAD:
+Bad:
 
 {% highlight r %}
 mtcars %>%
@@ -172,7 +173,7 @@ mtcars %>%
 # `ggplot` Objects
 Each additional `geom` or similar `ggplot2` component gets its own line.
 <div class = "good">
-GOOD:
+Good:
 
 {% highlight r %}
 ggplot(mtcars, aes(mpg, cyl)) +
@@ -181,13 +182,13 @@ ggplot(mtcars, aes(mpg, cyl)) +
 </div>
 
 <div class = "bad">
-BAD:
+Bad:
 
 {% highlight r %}
 ggplot(mtcars, aes(mpg, cyl)) + geom_point()
 {% endhighlight %}
 </div>
-[^%<>%]: [Wickham, 2017](http://r4ds.had.co.nz/pipes.html#other-tools-from-magrittr)
+
 
 
 In general, a `ggplot` object should have the following order:
@@ -201,7 +202,7 @@ In general, a `ggplot` object should have the following order:
 If possible, declare the aesthetic mappings of a `ggplot` object in the opening `ggplot` call, so that the later geoms inherit the same mappings. 
 
 <div class = "good">
-GOOD:
+good:
 
 {% highlight r %}
 ggplot(mtcars, aes(mpg, disp)) +
@@ -210,7 +211,7 @@ ggplot(mtcars, aes(mpg, disp)) +
 </div>
 
 <div class = "bad">
-BAD:
+Bad:
 
 {% highlight r %}
 ggplot(mtcars) +
