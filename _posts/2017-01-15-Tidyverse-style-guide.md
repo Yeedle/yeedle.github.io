@@ -15,8 +15,18 @@ excerpt: "How to style your code, when you code with the tidyverse"
 ---
 
 <style>
-div.bad > figure.highlight > pre { background-color:rgba(255, 0, 0, 0.2); }
-div.good > figure.highlight > pre { background-color:rgba(0, 255, 0, 0.2); }
+div.bad > figure.highlight > pre 
+{ 
+  background-color:rgba(255, 0, 0, 0.2); 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+div.good > figure.highlight > pre 
+{ 
+  background-color:rgba(0, 255, 0, 0.2); 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 </style>
 
 
@@ -30,7 +40,7 @@ The two most popular [^citationeeded] R style guides are the [Google's R Style G
 If you're using several Tidyverse pacakges, use `library(tidyverse)` instead of listing them all individually.
 
 ### Line Length
-Many style guides mention to never let a line go past 80 (or 120) characters. If you're using RStudio, there's a helpful setting for this. Go to Tools -> Global Options... -> Code -> Display, and select the option "Show margin", and set "margin column" to 80 (or 120).
+This isn't really unique to the tidyverse but I included it nonetheless. Many style guides mention to never let a line go past 80 (or 120) characters. If you're using RStudio, there's a helpful setting for this. Go to Tools -> Global Options... -> Code -> Display, and select the option "Show margin", and set "margin column" to 80 (or 120).
 
 When arguments to functions overrun the 80 character limit, break them up into multiple lines and use spaces to align them. This applies in particular to pipes where multiple levels of indentation can quickly lead to overflowing lines.
 
@@ -38,7 +48,7 @@ When arguments to functions overrun the 80 character limit, break them up into m
 
 Each step in a pipeline should be on its own line, even for for short pipes.
 <div class = "good">
-GOOD:
+**Good**:
 
 {% highlight r %}
 mtcars %>% 
@@ -48,7 +58,7 @@ mtcars %>%
 </div>
 
 <div class = "bad">
-BAD:
+**Bad**:
 
 {% highlight r %}
 mtcars %>% mutate(cyl = cyl * 2) %>% mutate(mpg = mpg + 2)
