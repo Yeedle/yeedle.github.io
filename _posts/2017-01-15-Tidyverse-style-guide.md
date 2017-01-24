@@ -10,7 +10,7 @@ output:
   html_document:
     mathjax:  default
     fig_caption:  true
-    highlight: haddock
+    highlight: colorful
 excerpt: "How to style your code, when you code with the tidyverse"
 ---
 
