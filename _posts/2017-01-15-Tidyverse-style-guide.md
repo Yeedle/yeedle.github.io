@@ -44,9 +44,9 @@ This isn't really unique to the tidyverse but I included it nonetheless. Many st
 
 When arguments to functions overrun the 80 character limit, break them up into multiple lines and use spaces to align them. This applies in particular to pipes where multiple levels of indentation can quickly lead to overflowing lines.
 
-# Pipelines
+# Pipes
 
-Each step in a pipeline should be on its own line, even for for short pipes.
+Each step in a pipe should be on its own line, even for short pipes.
 <div class = "good">
 **Good**:
 
@@ -89,9 +89,9 @@ summarise(avg_disp = mean(disp))
 </div>
 
 
-Keep your pipelines under ten pipes. If your pipeline is longer than that, break up the pipline into intermediate objects with meaningful names [^tenperpipeline]
+Keep your pipes under ten lines. If your pipe is longer than that, break up the pipe into intermediate objects with meaningful names [^tenperpipe]
 
-[^tenperpipeline]:[Wickham, 2017](http://r4ds.had.co.nz/pipes.html#when-not-to-use-the-pipe)
+[^tenperpipe]:[Wickham, 2017](http://r4ds.had.co.nz/pipes.html#when-not-to-use-the-pipe)
 
 When breaking up a pipe into multiple intermediate objects, don't use the same name with a suffix attached (e.g. `foo_1`, `foo_2`, etc.), rather try to come up with a meaningful name that summarizes the pipe's goal (e.g. `foo_summarized_by_bar`).
 
@@ -100,7 +100,7 @@ When breaking up a pipe into multiple intermediate objects, don't use the same n
 <script async src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </center>
 
-Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^%<>%] Instead, use explicit assignment. Also, don't use the `->` assignment operator at the end of a pipe.
+Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^%<>%] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.^[[Rudis, 2015](https://rud.is/b/2015/02/04/a-step-to-the-right-in-r-assignments/)]
 
 <div class = "good">
 GOOD:
