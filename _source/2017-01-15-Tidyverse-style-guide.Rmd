@@ -15,8 +15,8 @@ excerpt: "How to style your code, when you code with the tidyverse"
 ---
 
 <style>
-div.bad code.language-r { background-color:rgba(255, 0, 0, 0.2); }
-div.good code-language-r { background-color:rgba(0, 255, 0, 0.2); }
+div.bad > figure.highlight > pre { background-color:rgba(255, 0, 0, 0.2); }
+div.good > figure.highlight > pre { background-color:rgba(0, 255, 0, 0.2); }
 </style>
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T, eval = F)
