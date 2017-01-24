@@ -102,9 +102,9 @@ When breaking up a pipe into multiple intermediate objects, don't use the same n
 <script async src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </center>
 
-Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^%<>%] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.[^rhsassignment] 
+Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^assignpipe] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.[^rhsassignment] 
 
-[^%<>%]: [Wickham, 2017](http://r4ds.had.co.nz/pipes.html#other-tools-from-magrittr)
+[^assignpipe]: [Wickham, 2017](http://r4ds.had.co.nz/pipes.html#other-tools-from-magrittr)
 
 [^rhsassignment]: [Rudis, 2015](https://rud.is/b/2015/02/04/a-step-to-the-right-in-r-assignments/)
 
@@ -136,6 +136,7 @@ mtcars %>%
   group_by(gear) %>%
   summarise(avg_disp = mean(disp)) -> mtcars
 {% endhighlight %}
+</div>
 
 When adding more then one column in a `mutate` pipe, separate them on multiple lines, or just use separate mutate statements for each column.
 
