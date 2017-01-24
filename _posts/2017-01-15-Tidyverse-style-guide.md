@@ -10,7 +10,7 @@ output:
   html_document:
     mathjax:  default
     fig_caption:  true
-    highlight: haddock
+   
 excerpt: "How to style your code, when you code with the tidyverse"
 ---
 
@@ -48,6 +48,7 @@ When arguments to functions overrun the 80 character limit, break them up into m
 
 Each step in a pipe should be on its own line, even for short pipes.
 <div class = "good">
+
 **Good**:
 
 {% highlight r %}
@@ -58,6 +59,7 @@ mtcars %>%
 </div>
 
 <div class = "bad">
+
 **Bad**:
 
 {% highlight r %}
@@ -67,7 +69,7 @@ mtcars %>% mutate(cyl = cyl * 2) %>% mutate(mpg = mpg + 2)
 
 Every line past the first line should be indented with two spaces.
 <div class = "good">
-GOOD:
+Good:
 
 {% highlight r %}
 mtcars2 <- mtcars %>%
@@ -78,7 +80,7 @@ mtcars2 <- mtcars %>%
 </div>
 
 <div class = "bad">
-BAD:
+Bad:
 
 {% highlight r %}
 mtcars2 <- mtcars %>% 
@@ -100,12 +102,12 @@ When breaking up a pipe into multiple intermediate objects, don't use the same n
 <script async src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </center>
 
-Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^tenperpipe] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.[^rhsassignment]
+Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^tenperpipe] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.[^rhsassignment] 
 
 [^rhsassignment]: [Rudis, 2015](https://rud.is/b/2015/02/04/a-step-to-the-right-in-r-assignments/)
 
 <div class = "good">
-GOOD:
+Good:
 
 {% highlight r %}
 mtcars <- mtcars %>% 
@@ -115,7 +117,7 @@ mtcars <- mtcars %>%
 </div>
 
 <div class = "bad">
-BAD:
+Bad:
 
 {% highlight r %}
 mtcars %<>% 
@@ -125,10 +127,93 @@ mtcars %<>%
 </div>
 
 <div class = "bad">
-BAD:
+Bad:
 
 {% highlight r %}
 mtcars %>%
   group_by(gear) %>%
   summarise(avg_disp = mean(disp)) -> mtcars
 {% endhighlight %}
+When adding more then one column in a `mutate` pipe, separate them on multiple lines, or just use separate mutate statements for each column.
+
+<div class = "good">
+GOOD:
+
+{% highlight r %}
+mtcars %>%
+  mutate(transmition = factor(am, labels =  c("automatic", "manual")),
+         weight = wt * 1000,
+         kml = mpg * 0.425)
+{% endhighlight %}
+</div>
+
+<div class = "good">
+GOOD:
+
+{% highlight r %}
+mtcars %>%
+  mutate(transmition = factor(am, labels =  c("automatic", "manual"))) %>%
+  mutate(weight = wt * 1000) %>%
+  mutate(kml = mpg * 0.425)
+{% endhighlight %}
+</div>
+<div class = "bad">
+BAD:
+
+{% highlight r %}
+mtcars %>%
+  mutate(transmition = factor(am, labels =  c("automatic", "manual")), weight = wt * 1000, kml = mpg * 0.425)
+{% endhighlight %}
+</div>
+
+
+
+
+# `ggplot` Objects
+Each additional `geom` or similar `ggplot2` component gets its own line.
+<div class = "good">
+GOOD:
+
+{% highlight r %}
+ggplot(mtcars, aes(mpg, cyl)) +
+  geom_point()
+{% endhighlight %}
+</div>
+
+<div class = "bad">
+BAD:
+
+{% highlight r %}
+ggplot(mtcars, aes(mpg, cyl)) + geom_point()
+{% endhighlight %}
+</div>
+[^%<>%]: [Wickham, 2017](http://r4ds.had.co.nz/pipes.html#other-tools-from-magrittr)
+
+
+In general, a `ggplot` object should have the following order:
+
+1. `geom`s and `stat`s
+2. `scale`s, `coord`s, and `facet`s
+3. `annotate`s
+3. `theme`s, `labs`s, etc.
+
+
+If possible, declare the aesthetic mappings of a `ggplot` object in the opening `ggplot` call, so that the later geoms inherit the same mappings. 
+
+<div class = "good">
+GOOD:
+
+{% highlight r %}
+ggplot(mtcars, aes(mpg, disp)) +
+  geom_point()
+{% endhighlight %}
+</div>
+
+<div class = "bad">
+BAD:
+
+{% highlight r %}
+ggplot(mtcars) +
+  geom_point(aes(mpg, disp))
+{% endhighlight %}
+</div>
