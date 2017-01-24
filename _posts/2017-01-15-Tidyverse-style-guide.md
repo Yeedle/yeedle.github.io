@@ -100,7 +100,9 @@ When breaking up a pipe into multiple intermediate objects, don't use the same n
 <script async src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </center>
 
-Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^%<>%] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.^[[Rudis, 2015](https://rud.is/b/2015/02/04/a-step-to-the-right-in-r-assignments/)]
+Avoid the assignment operator `%<>%` whenever possible (which is to say, always).[^tenperpipe] Instead, use explicit assignment. If you don't like the `<-` operator at the beginning of a pipe, some people suggest the `->` assignment operator at the end of a pipe.[^rhsassignment]
+
+[^rhsassignment]: [Rudis, 2015](https://rud.is/b/2015/02/04/a-step-to-the-right-in-r-assignments/)]
 
 <div class = "good">
 GOOD:
