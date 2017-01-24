@@ -17,8 +17,7 @@ excerpt: "How to style your code, when you code with the tidyverse"
 <style>
 div.bad pre.r { background-color:rgba(255, 0, 0, 0.2); }
 div.good pre.r { background-color:rgba(0, 255, 0, 0.2); }
-div.good  { color:green; }
-div.bad  { color:red; }
+
 </style>
 
 
@@ -43,7 +42,7 @@ Each step in a pipeline should be on its own line, even for for short pipes.
 GOOD:
 
 {% highlight r %}
-mtcars %>% 
+mtcars %>%
   mutate(cyl = cyl * 2) %>%
   mutate(mpg = mpg + 2)
 {% endhighlight %}
@@ -73,7 +72,7 @@ mtcars2 <- mtcars %>%
 BAD:
 
 {% highlight r %}
-mtcars2 <- mtcars %>% 
+mtcars2 <- mtcars %>%
 mutate(cyl = cyl * 2) %>%
 group_by(gear) %>%
 summarise(avg_disp = mean(disp))
@@ -98,7 +97,7 @@ Avoid the assignment operator `%<>%` whenever possible (which is to say, always)
 GOOD:
 
 {% highlight r %}
-mtcars <- mtcars %>% 
+mtcars <- mtcars %>%
   group_by(gear) %>%
   summarise(avg_disp = mean(disp))
 {% endhighlight %}
@@ -108,7 +107,7 @@ mtcars <- mtcars %>%
 BAD:
 
 {% highlight r %}
-mtcars %<>% 
+mtcars %<>%
   group_by(gear) %>%
   summarise(avg_disp = mean(disp))
 {% endhighlight %}
