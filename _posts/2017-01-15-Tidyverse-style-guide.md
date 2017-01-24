@@ -4,7 +4,7 @@ title: "A Tidyverse Style Guide"
 comments:  true
 published:  true
 author: "Yeedle"
-date: "2017-01-15 09:00:00 EST"
+date: "2017-01-15 00:00:00 EDT"
 categories: [R, tidyverse, "style guide"]
 output:
   html_document:
@@ -49,7 +49,7 @@ When arguments to functions overrun the 80 character limit, break them up into m
 Each step in a pipe should be on its own line, even for short pipes.
 <div class = "good">
 
-**Good**:
+_Good_:
 
 {% highlight r %}
 mtcars %>% 
@@ -145,7 +145,7 @@ Good:
 
 {% highlight r %}
 mtcars %>%
-  mutate(transmition = factor(am, labels =  c("automatic", "manual")),
+  mutate(cyl = cyl * 2,
          weight = wt * 1000,
          kml = mpg * 0.425)
 {% endhighlight %}
@@ -156,7 +156,7 @@ Good:
 
 {% highlight r %}
 mtcars %>%
-  mutate(transmition = factor(am, labels =  c("automatic", "manual"))) %>%
+  mutate(cyl = cyl * 2) %>%
   mutate(weight = wt * 1000) %>%
   mutate(kml = mpg * 0.425)
 {% endhighlight %}
@@ -166,14 +166,14 @@ Bad:
 
 {% highlight r %}
 mtcars %>%
-  mutate(transmition = factor(am, labels =  c("automatic", "manual")), weight = wt * 1000, kml = mpg * 0.425)
+  mutate(cyl = cyl * 2, weight = wt * 1000, kml = mpg * 0.425)
 {% endhighlight %}
 </div>
 
 
 
 
-# `ggplot` Objects
+# ggplot Objects
 Each additional `geom` or similar `ggplot2` component gets its own line.
 <div class = "good">
 Good:
