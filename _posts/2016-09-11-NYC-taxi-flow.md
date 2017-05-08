@@ -336,5 +336,5 @@ plot <- ggplot(data_tweened , aes(fill = log_avg, frame = frame)) +
 
 gganimate(plot, ani.width = 960, ani.height = 960, interval = .05, "taxi.gif")
 {% endhighlight %}
-![]("/home/yeedle/Documents/blog/_source/taxi.gif")
+![]("figures/source/2016-09-11-NYC-taxi-flow/read_shapefiles-1.png")
 
