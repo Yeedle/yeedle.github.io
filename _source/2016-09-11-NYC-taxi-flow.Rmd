@@ -2,27 +2,200 @@
 layout:  post
 title: "NYC's Taxi Flow"
 comments:  true
-published:  false
+published:  true
 author: "Yeedle"
-date: "2016-09-11 09:50:00 EDT"
-categories: [NYC, taxi, R, ggplot2, ggmap, dplyr]
+date: "2017-05-08 09:50:00 EST"
+categories: [NYC, taxi, R, tidyverse, sf, tweenr, fuzzyjoin, ggplot2, gganimate, dplyr, tidyr]
 output:
   html_document:
     mathjax:  default
     fig_caption:  true
-excerpt: "Visualizing the flow of taxi travel in NYC, through the prism of the yellow taxi system."
+excerpt: "Visualizing the flow of NYC's yellow cab system."
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
-This past summer, I've had the incredible experience of attending the [Data Science Summer School](https://ds3.research.microsoft.com/) (DS3), by Microsoft Research NYC. As part of DS3, I got to research some interesting questions using [TLC trip data](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml). 
+This is an iteration of something I did last summer when I had the incredible experience of attending the [Microsoft Reserch Data Science Summer School](https://ds3.research.microsoft.com/) (DS3). For my team's presentation, we wanted to include a kind-of Hans Rosling moment, where one of us get to talk over an animated visualization of the flow of NYC's taxi system. The result of our efforts looked like this:
 
-If that sounds boring, think again. The open[^1] dataset we worked with hold the records of every single trip that has taken place in NYC in extreme detail. The precise location where it was hailed, its destination, the price that was paid, the mode of payment, the amout of tip paid, the total number of passengers, the duration of the trip, distance traveled... Just about any piece of information you can possibly think of. This is an incredible dataset with lots to be discovered if only it is analyzed and explored. And indeed, many people have done some awesome analysis using this data, including our team at DS3.
+![](https://github.com/msr-ds3/nyctaxi/blob/master/figures/weekdays_cumsum_flow.gif?raw=true)
+
+It was kind of a last minute thing, and I've always wanted to go back and redo it. Since last summer, the tidyverse has made a lot of progress, specifically in the area of spatial data with the appearence of `sf`, a tidy package for spatial data manipulation, and I decided to redo it using `sf`, as well as `tweenr` a package I discovered earlier this year which lets you create smoother animations.
 
 
-[^1]: Open data is data that is "freely available to everyone to use and republish as they wish, without restrictions from copyright, patents or other mechanisms of control", as per [Wikipedia](https://en.wikipedia.org/wiki/Open_data)
+The data I used is freely available on the [TLC's website](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml). I chose to only work with the last 6 months of 2016, since the RAM on my laptop couldn't handle more. Another cool thing that happened since last summer is that the TLC released a shapefile of the official taxi zones. So while the original animation relied on an "unofficial" source for NYC neighborhood boundaries, I now had the ability to use the TLC's own shapefile.
 
-But in this post I want to focus on one particular question we explored. We asked: Is there a way to measure, quantify, and visualize the daily flow of taxis in New York City? It's a simple question
+### How To
+The first step is, of course, downloading the data. You can do this by pointing and clicking at the above link, or by writing a shell script. Personally, I like when everything happens inside R, so here's how I did it: 
+
+```{r downloading, eval=FALSE}
+library(tidyverse)
+library(glue)
+
+data <- glue("https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_{year}-{month}.csv",
+             year = "2016",
+             month = c("07", "08", "09", "10", "11", "12")) %>%
+  map_df(possibly(read_csv, otherwise = data_frame())) %>% 
+  select(pickup_datetime = tpep_pickup_datetime,
+                        dropoff_datetime = tpep_dropoff_datetime,
+                        passenger_count,
+                        pickup_zone_id = PULocationID,
+                        dropoff_zone_id = DOLocationID) %>%
+  drop_na()
+
+```
+```{r, include=FALSE}
+load("~/Downloads/data.rds")
+
+data <- data %>% select(pickup_datetime = tpep_pickup_datetime,
+                        dropoff_datetime = tpep_dropoff_datetime,
+                        passenger_count,
+                        pickup_zone_id = PULocationID,
+                        dropoff_zone_id = DOLocationID) %>%
+  drop_na()
+```
+Here's what's happening line-by-line: Using `glue`, I created a list of the file URLs. I then `map`ped the list to `possibly(read_csv)` which does the heavy lifting of downloading the files, reading them into R as dataframes, and reducing everything to one big dataframe. Why only `possibly` you ask? The Internet is weird. Don't leave the fate of your downloads in its hands. `possibly` gives you the option of specifying an `otherwise` option in case of failure. In our case, an empty data frame works fine.
+
+
+Since these files are quite big, this step takes a while. The resulting list of dataframes are then `reduce`d into one dataframe using `bind_rows`. Since most of the dataframe is not needed and it's just wasting the computer's memory, I `select` the 5 columns needed for the animation, and drop all the rows with `NA` fields in them.
+
+The next step is getting the shapefile with the neighborhood information. Again, you can do this by pointing and clicking on the TLC's website. I prefer having R doing it for me:
+```{r shapefile_download}
+library(curl)
+temp <- paste0(tempdir(), "/taxi_zones.zip")
+curl_download("https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip",temp)
+taxi_shapefile_path <- paste0(tempdir(), "/taxi_zones")
+unzip(temp, exdir = taxi_shapefile_path)
+unlink(temp)
+```
+
+That's it. The shapefile are now downloaded and unzipped and sitting in the temporary directory.
+
+```{r read_shapefiles}
+library(sf)
+library(magrittr)
+
+quietly(st_read)(taxi_shapefile_path, "taxi_zones") %>%
+  extract2("result") %>%
+  ggplot() + 
+  geom_sf(aes(fill = borough)) +
+  theme_minimal()
+```
+Cool! Unfortunately, as you might discern from the map, the taxi zones defined for some neighborhoods are a bit too granular for what I want. I used the `fuzzyjoin` package to combine the taxi zones into bigger neighborhoods, leaving the polygon dissolving to `sf`.
+
+```{r neighborhoods}
+library(fuzzyjoin)
+
+neighborhoods <- data_frame(zone = c("Battery Park", "Clinton", "Crown Heights", "Chelsea",
+                                     "Harlem", "Financial District|World Trade Center", "Greenwich Village",
+                                     "Lenox Hill", "Lincoln Square", "Midtown", "Turtle Bay",
+                                     "Williamsburg", "Upper East Side", "Upper West Side",
+                                     "West Village","SoHo|Hudson Sq","Washington Heights",
+                                     "Yorkville"))
+
+zones <- quietly(st_read)(taxi_shapefile_path, "taxi_zones") %>%
+  extract2("result") %>%
+  st_set_precision(4) %>% 
+  regex_left_join(neighborhoods, by = "zone") %>% 
+  mutate(zone = if_else(!is.na(zone.y), zone.y, as.character(zone.x))) %>%
+  select(LocationID, zone, borough, geometry)
+
+```
+This creates an `sf` object, which we'll use for plotting NYC's map. But for now, we don't need the `sf` attributes, and since dataframe operations are faster, I ceated a dataframe with the same information as in `zones` minus the `geometry` list column.
+
+```{r zones_df}
+zone_df <- zones %>% as_tibble() %>% select(-geometry)
+```
+
+This is all we need to add the location names to the `data` dataframe:
+
+```{r add_location}
+data <- data %>% 
+  left_join(zone_df, by = c("pickup_zone_id"="LocationID")) %>%
+  rename(pickup_zone = zone) %>%
+  left_join(zone_df, by = c("dropoff_zone_id"="LocationID")) %>%
+  rename(dropoff_zone = zone)
+```
+
+Ok, with all the prelimenary data setup out of the way, it's time to do the actual work. One way to capture the concept of the flow of people in a city, is to measure the difference of people who entered a given neighborhood and people who left it at a given time. This gives us a "flow score" for that particular neighborhood at that point in time. This is similar to how flow in a network is measured, and it's a rough measure of how people move about the city using yellow cabs. This is particularly useful for visulizaiton purposes, where we can map a color palette to the range of 'flow' values over all the neighborhoods.
+
+Since getting a moment-to-moment flow score is not very useful (because not much change happens at any given moment in most of NYC neighborhoods), it's more useful to compute a neighborhood's flow score at the beginiing of each hour of the day, and then interpolate the scores between the hour. In our data, which stretches over a 6 month period, we can calculate the score for every day at every hour, and then take the average. 
+
+There was only one problem with this approach. Some neighborhoods, at certain times in the day, have zero taxi cabs visiting them. To ensure that the average also takes into account the times when nothing happened, I created an empty dataframe, which I then joined with the original dataframe, to fill in the missing hours and days.
+
+```{r empty}
+library(lubridate)
+
+empty_data <-  zone_df %>%
+  distinct(zone) %>%
+  mutate(month = map(zone, ~tibble(month = rep(7:12)))) %>%
+  unnest() %>%
+  mutate(days_in_month = days_in_month(month),
+         days_and_hours = map(days_in_month,
+                              ~tibble(day_in_month = rep(1:.x, each = 24),
+                                      hour_of_day = rep(0:23, .x)))) %>%
+  unnest() %>%
+  mutate(date = make_date(year = 2016, month = month, day = day_in_month)) %>%
+  select(-days_in_month, -day_in_month, -month)
+
+head(empty_data)
+```
+
+With the `empty_data` dataframe ready, the flow scores can be calculated:
+```{r}
+data <- data %>%
+  mutate(hour_of_day = hour(pickup_datetime),
+         date = as_date(pickup_datetime)) %>%
+  gather(type, zone, pickup_zone, dropoff_zone) %>%
+  mutate(count = if_else(type == "pickup_zone", -passenger_count, passenger_count)) %>%
+  group_by(zone, date, hour_of_day) %>%
+  summarize(total = sum(count)) %>%
+  right_join(empty_data, by = c("zone", "date", "hour_of_day")) %>%
+  replace_na(list(total = 0)) %>%
+  group_by(zone, hour_of_day) %>%
+  summarize(log_avg = log10(abs(mean(total)) + 1) * sign(mean(total))) 
+
+head(data)
+```
+
+This now gives us a dataframe with 24 rows per neighborhood, a row for each hour in the day, and for each neighborhood, for each hour, the log average "flow score." This is enoguh to make the animation at the top of this post. But for the redo, I wanted something more smooth. This is where `tweenr` comes in. `tweenr` is a wonderful package that allows to interpolate data for smoother animation. 
+
+```{r}
+library(tweenr)
+
+data_tweened <- data %>% 
+  bind_rows(filter(data, hour_of_day == 0) %>% mutate(hour_of_day = 24)) %>%
+  arrange(zone, hour_of_day) %>%
+  mutate(ease = "linear") %>% 
+  tween_elements('hour_of_day','zone','ease', nframes = 24*10) %>%
+  left_join(zones %>% group_by(zone) %>% summarise(), by = c(".group" = "zone")) %>%
+  mutate(frame = as_factor(paste0(ifelse(as.integer(hour_of_day)%%12 == 0, '12', as.integer(hour_of_day)%%12), 
+                        ":", 
+                        ifelse(((hour_of_day-as.integer(hour_of_day))*60) < 10, "0", ""), 
+                        round((hour_of_day-as.integer(hour_of_day))*60),
+                        ifelse(as.integer(hour_of_day) < 12 | as.integer(hour_of_day) == 24, " AM"," PM"))))
+
+head(data_tweened)
+```
+```{r, eval=F}
+plot <- ggplot(data_tweened , aes(fill = log_avg, frame = frame)) +
+  geom_sf() +
+  scale_fill_distiller(palette = "RdBu", na.value = "#808080", guide = "legend",
+                       name = "average # of people",
+                       breaks = c(3, 2, 1, 0, -1, -2,  -3),
+                       labels = c(1000, 100, 10, 0, -10, -100, -1000)) +
+  theme_ipsum()+
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        panel.background = element_blank()) +
+  labs(title = "Time: ", caption = "Average daily flow of people using the NYC Taxi system")
+
+
+gganimate(plot, ani.width = 960, ani.height = 960, interval = .05, "taxi.gif")
+
+```
+![]("/home/yeedle/Documents/blog/_source/taxi.gif")
 
