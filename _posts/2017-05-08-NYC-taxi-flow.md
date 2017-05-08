@@ -132,7 +132,7 @@ quietly(st_read)(taxi_shapefile_path, "taxi_zones") %>%
   theme_minimal()
 {% endhighlight %}
 
-![plot of chunk read_shapefiles](figure/source/2017-05-08-NYC-taxi-flow/read_shapefiles-1.png)
+![plot_of_taxi_zones](https://github.com/Yeedle/yeedle.github.io/blob/master/figure/source/2017-05-08-NYC-taxi-flow/read_shapefiles-1.png?raw=true)
 Cool! Unfortunately, as you might discern from the map, the taxi zones defined for some neighborhoods are a bit too granular for what I want. I used the `fuzzyjoin` package to combine the taxi zones into bigger neighborhoods, leaving the polygon dissolving to `sf`.
 
 
@@ -336,5 +336,6 @@ plot <- ggplot(data_tweened , aes(fill = log_avg, frame = frame)) +
 
 gganimate(plot, ani.width = 960, ani.height = 960, interval = .05, "taxi.gif")
 {% endhighlight %}
-![](figure/source/2017-05-08-NYC-taxi-flow/taxi.gif)
+![new animation](https://github.com/Yeedle/yeedle.github.io/blob/master/figure/source/2017-05-08-NYC-taxi-flow/taxi.gif?raw=true)
 
+Voilà!
