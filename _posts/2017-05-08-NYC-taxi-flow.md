@@ -15,7 +15,7 @@ excerpt: "Visualizing the flow of NYC's yellow cab system."
 
 
 
-This is an iteration of something I did last summer when I had the incredible experience of attending the [Microsoft Reserch Data Science Summer School](https://ds3.research.microsoft.com/) (DS3). For my team's [presentation](https://www.microsoft.com/en-us/research/video/data-science-summer-school-2016-fare-share-flow-and-efficiency-in-nycs-taxi-system/), we wanted to include a kind-of [Hans Rosling moment](https://www.youtube.com/watch?v=jbkSRLYSojo), where one of us gets to talk animatedly over an animated visualization of the flow of NYC's taxi system, explaining the flow as the animation plays. The result of our efforts looked like this:
+This is an iteration of something I did last summer when I had the incredible experience of attending the [Microsoft Reserch Data Science Summer School](https://ds3.research.microsoft.com/) (DS3). For my team's [presentation](https://www.microsoft.com/en-us/research/video/data-science-summer-school-2016-fare-share-flow-and-efficiency-in-nycs-taxi-system/), we wanted to include a kind-of [Hans Rosling moment](https://www.youtube.com/watch?v=jbkSRLYSojo), where one of us gets to talk animatedly over an animated visualization of the flow of NYC's taxi system, explaining the flow as the animation plays. The result of our efforts looked like this ([code here](https://github.com/msr-ds3/nyctaxi/blob/master/flow/flow_analysis.R)):
 
 ![old gif](https://github.com/msr-ds3/nyctaxi/blob/master/figures/weekdays_cumsum_flow.gif?raw=true)
 
@@ -37,10 +37,10 @@ data <- glue("https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_{year}-
              month = c("07", "08", "09", "10", "11", "12")) %>%
   map_df(possibly(read_csv, otherwise = data_frame())) %>% 
   select(pickup_datetime = tpep_pickup_datetime,
-                        dropoff_datetime = tpep_dropoff_datetime,
-                        passenger_count,
-                        pickup_zone_id = PULocationID,
-                        dropoff_zone_id = DOLocationID) %>%
+         dropoff_datetime = tpep_dropoff_datetime,
+         passenger_count,
+         pickup_zone_id = PULocationID,
+         dropoff_zone_id = DOLocationID) %>%
   drop_na()
 {% endhighlight %}
 
@@ -53,26 +53,7 @@ The next step is getting the shapefile with the neighborhood information. Again,
 
 {% highlight r %}
 library(curl)
-{% endhighlight %}
 
-
-
-{% highlight text %}
-## 
-## Attaching package: 'curl'
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## The following object is masked from 'package:readr':
-## 
-##     parse_date
-{% endhighlight %}
-
-
-
-{% highlight r %}
 temp <- paste0(tempdir(), "/taxi_zones.zip")
 curl_download("https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip",temp)
 taxi_shapefile_path <- paste0(tempdir(), "/taxi_zones")
@@ -97,34 +78,7 @@ library(sf)
 
 {% highlight r %}
 library(magrittr)
-{% endhighlight %}
 
-
-
-{% highlight text %}
-## 
-## Attaching package: 'magrittr'
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## The following object is masked from 'package:purrr':
-## 
-##     set_names
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## The following object is masked from 'package:tidyr':
-## 
-##     extract
-{% endhighlight %}
-
-
-
-{% highlight r %}
 quietly(st_read)(taxi_shapefile_path, "taxi_zones") %>%
   extract2("result") %>%
   ggplot() + 
@@ -180,32 +134,7 @@ There was only one problem with this approach. Some neighborhoods, at certain ti
 
 {% highlight r %}
 library(lubridate)
-{% endhighlight %}
 
-
-
-{% highlight text %}
-## Loading required package: methods
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## 
-## Attaching package: 'lubridate'
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## The following object is masked from 'package:base':
-## 
-##     date
-{% endhighlight %}
-
-
-
-{% highlight r %}
 empty_data <-  zone_df %>%
   distinct(zone) %>%
   mutate(month = map(zone, ~tibble(month = rep(7:12)))) %>%
@@ -318,6 +247,10 @@ head(data_tweened)
 ## 5 POLYGON((1010804.25 218919.... 12:00 AM
 ## 6 POLYGON((1005482.25 221686.... 12:00 AM
 {% endhighlight %}
+
+Here's what happened in this chunk of code: in the first line I re-added hour 0 to the dataframe as hour 24 so that the animation is continously smoothed. Next the data is `arrange`d for each neighborhood in order of the hours. Then a column specifying the easing function to be used by `tweener` is added to the dataframe. I wanted a realistic look, so I went for "linear." Then, `tween_elements` takes the dataframe, and interpolates the data as specified in the argumennts. I specified 240 frame, 10 for each hour, figuring that would give me a smooth enough animation yet not a too large file.
+
+Once the data is tweened, it is handed off to `left_join` where it is rejoined with the `sf` object "`zone`" created earlier. Note that `zone` is grouped by zone and then summarize. This is to dissolve the multiple taxi zone polygons that compose one neighborhood, as specified in the neighborhood dataframe we `left_join`ed earlier. Finally, a new column called `frame` is added to the dataframe, in which the meaningless interpolated `hour_of_day` column is turned into meaninful time stamps. And now, showtime:
 
 {% highlight r %}
 library(gganimate)
