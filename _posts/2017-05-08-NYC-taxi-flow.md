@@ -17,9 +17,9 @@ excerpt: "Visualizing the flow of NYC's yellow cab system."
 
 This is an iteration of something I did last summer when I had the incredible experience of attending the [Microsoft Reserch Data Science Summer School](https://ds3.research.microsoft.com/) (DS3). For my team's [presentation](https://www.microsoft.com/en-us/research/video/data-science-summer-school-2016-fare-share-flow-and-efficiency-in-nycs-taxi-system/), we wanted to include a kind-of [Hans Rosling moment](https://www.youtube.com/watch?v=jbkSRLYSojo), where one of us gets to talk animatedly over an animated visualization of the flow of NYC's taxi system, explaining the flow as the animation plays. The result of our efforts looked like this:
 
-![](https://github.com/msr-ds3/nyctaxi/blob/master/figures/weekdays_cumsum_flow.gif?raw=true)
+![old gif](https://github.com/msr-ds3/nyctaxi/blob/master/figures/weekdays_cumsum_flow.gif?raw=true)
 
-It was kind of a last minute thing, and I've always wanted to go back and redo it. Since last summer, the tidyverse has made a lot of progress, specifically in the area of spatial data with the appearence of `sf`, a tidy package for spatial data manipulation, and I decided to redo it using `sf`, combined with `tweenr`, a package I discovered earlier this year which lets you create smoother animations, and other tidy tools.
+It was kind of a last minute thing, and I've always wanted to go back and redo it. Since last summer, the tidyverse has made a lot of progress, specifically in the area of spatial data with the appearence of `sf`, a tidy package for spatial data manipulation, and I decided to redo it using [`sf`](https://github.com/edzer/sfr, combined with) [`tweenr`](https://github.com/thomasp85/tweenr), a package I discovered earlier this year which lets you create smoother animations, and other tidy tools.
 
 
 The data I used is freely available on the [TLC's website](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml). I chose to only work with the last 6 months of 2016, since the RAM on my laptop couldn't handle more. Another cool thing that happened since last summer is that the TLC released a shapefile of the official taxi zones. So while the original animation relied on an "unofficial" source for NYC neighborhood boundaries, I now had the ability to use the TLC's own shapefile.
@@ -133,7 +133,7 @@ quietly(st_read)(taxi_shapefile_path, "taxi_zones") %>%
 {% endhighlight %}
 
 ![plot_of_taxi_zones](https://github.com/Yeedle/yeedle.github.io/blob/master/figure/source/2017-05-08-NYC-taxi-flow/read_shapefiles-1.png?raw=true)
-Cool! Unfortunately, as you might discern from the map, the taxi zones defined for some neighborhoods are a bit too granular for what I want. I used the `fuzzyjoin` package to combine the taxi zones into bigger neighborhoods, leaving the polygon dissolving to `sf`.
+Cool! Unfortunately, as you might discern from the map, the taxi zones defined for some neighborhoods are a bit too granular for what I want. I used the [`fuzzyjoin`](https://github.com/dgrtwo/fuzzyjoin) package to combine the taxi zones into bigger neighborhoods, leaving the polygon dissolving to `sf`.
 
 
 {% highlight r %}
@@ -320,6 +320,8 @@ head(data_tweened)
 {% endhighlight %}
 
 {% highlight r %}
+library(gganimate)
+
 plot <- ggplot(data_tweened , aes(fill = log_avg, frame = frame)) +
   geom_sf() +
   scale_fill_distiller(palette = "RdBu", na.value = "#808080", guide = "legend",
