@@ -15,17 +15,17 @@ excerpt: "Visualizing the flow of NYC's yellow cab system."
 
 
 
-This is an iteration of something I did last summer when I had the incredible experience of attending the [Microsoft Reserch Data Science Summer School](https://ds3.research.microsoft.com/) (DS3). For my team's presentation, we wanted to include a kind-of Hans Rosling moment, where one of us get to talk over an animated visualization of the flow of NYC's taxi system. The result of our efforts looked like this:
+This is an iteration of something I did last summer when I had the incredible experience of attending the [Microsoft Reserch Data Science Summer School](https://ds3.research.microsoft.com/) (DS3). For my team's [presentation](https://www.microsoft.com/en-us/research/video/data-science-summer-school-2016-fare-share-flow-and-efficiency-in-nycs-taxi-system/), we wanted to include a kind-of [Hans Rosling moment](https://www.youtube.com/watch?v=jbkSRLYSojo), where one of us gets to talk animatedly over an animated visualization of the flow of NYC's taxi system, explaining the flow as the animation plays. The result of our efforts looked like this:
 
 ![](https://github.com/msr-ds3/nyctaxi/blob/master/figures/weekdays_cumsum_flow.gif?raw=true)
 
-It was kind of a last minute thing, and I've always wanted to go back and redo it. Since last summer, the tidyverse has made a lot of progress, specifically in the area of spatial data with the appearence of `sf`, a tidy package for spatial data manipulation, and I decided to redo it using `sf`, as well as `tweenr` a package I discovered earlier this year which lets you create smoother animations.
+It was kind of a last minute thing, and I've always wanted to go back and redo it. Since last summer, the tidyverse has made a lot of progress, specifically in the area of spatial data with the appearence of `sf`, a tidy package for spatial data manipulation, and I decided to redo it using `sf`, combined with `tweenr`, a package I discovered earlier this year which lets you create smoother animations, and other tidy tools.
 
 
 The data I used is freely available on the [TLC's website](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml). I chose to only work with the last 6 months of 2016, since the RAM on my laptop couldn't handle more. Another cool thing that happened since last summer is that the TLC released a shapefile of the official taxi zones. So while the original animation relied on an "unofficial" source for NYC neighborhood boundaries, I now had the ability to use the TLC's own shapefile.
 
 ### How To
-The first step is, of course, downloading the data. You can do this by pointing and clicking at the above link, or by writing a shell script. Personally, I like when everything happens inside R, so here's how I did it: 
+The first step is, of course, downloading the data. You can do this by pointing and clicking at the above link, or by writing a shell script. Personally, I like when everything happens inside R, so here's how I did that (using the recently released `glue` package for string interpolation): 
 
 
 {% highlight r %}
@@ -44,10 +44,10 @@ data <- glue("https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_{year}-
   drop_na()
 {% endhighlight %}
 
-Here's what's happening line-by-line: Using `glue`, I created a list of the file URLs. I then `map`ped the list to `possibly(read_csv)` which does the heavy lifting of downloading the files, reading them into R as dataframes, and reducing everything to one big dataframe. Why only `possibly` you ask? The Internet is weird. Don't leave the fate of your downloads in its hands. `possibly` gives you the option of specifying an `otherwise` option in case of failure. In our case, an empty data frame works fine.
+Here's what's happening line-by-line: Using `glue`, I created a list of file URLs. I then `map`ped the list to `possibly(read_csv)` which does the heavy lifting of downloading the files, reading them into R as dataframes, and reducing everything to one big dataframe. Why only `possibly` you ask? The Internet is weird. Don't leave the fate of your downloads in its hands. `possibly` gives you the option of specifying an `otherwise` option in case of failure. In our case, an empty data frame works fine in case of failure.
 
 
-Since these files are quite big, this step takes a while. The resulting list of dataframes are then `reduce`d into one dataframe using `bind_rows`. Since most of the dataframe is not needed and it's just wasting the computer's memory, I `select` the 5 columns needed for the animation, and drop all the rows with `NA` fields in them.
+Since these files are quite big, this step takes a while. Since most of the dataframe is not needed and it's just wasting the computer's memory, I `select` the 5 columns needed for the animation, and drop all the rows with `NA` fields in them.
 
 The next step is getting the shapefile with the neighborhood information. Again, you can do this by pointing and clicking on the TLC's website. I prefer having R doing it for me:
 
